@@ -5,6 +5,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.core.TermVectorsResponse;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -19,8 +20,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -159,6 +160,18 @@ public class EsOperationApplicationTests {
         UpdateResponse val = elasticSearchMapper.updateRequestUpserts("posts", "3", update, insert);
         System.out.println(val.status());
         System.out.println(val.toString());
+
     }
+
+    @Test
+    public void termVectorsTest() throws Exception {
+        TermVectorsResponse val = elasticSearchMapper.termVectorsRequest("posts", "2", "user","message");
+        System.out.println(val.getFound());
+        System.out.println(val.getIndex());
+        System.out.println(val.getType());
+        List<TermVectorsResponse.TermVector> termVectorsList = val.getTermVectorsList();
+        System.out.println(termVectorsList);
+    }
+
 
 }

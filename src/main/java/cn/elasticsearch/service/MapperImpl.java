@@ -10,6 +10,8 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.TermVectorsRequest;
+import org.elasticsearch.client.core.TermVectorsResponse;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.script.Script;
@@ -20,7 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class MapperImpl implements IndexMapper ,GetMapper,ExistsMapper,DeleteMapper,UpdateMapper{
+public class MapperImpl implements IndexMapper ,GetMapper,ExistsMapper
+        ,DeleteMapper,UpdateMapper,TermVectorsMapper{
 
     @Autowired
     private RestHighLevelClient client;
@@ -142,5 +145,14 @@ public class MapperImpl implements IndexMapper ,GetMapper,ExistsMapper,DeleteMap
                 .upsert(Upserts);
 
         return client.update(request,RequestOptions.DEFAULT);
+    }
+
+    @Override
+    public TermVectorsResponse termVectorsRequest(String index, String id, String... fields) throws Exception {
+        TermVectorsRequest request = new TermVectorsRequest(index, id);
+        request.setFields(fields);
+        request.setTermStatistics(true);
+
+        return client.termvectors(request,RequestOptions.DEFAULT);
     }
 }
